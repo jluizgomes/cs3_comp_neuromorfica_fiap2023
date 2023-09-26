@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: previsao-tempo-amazonia-api
+spec:
+  replicas: 2 # Ajuste o número de réplicas conforme necessário
+  selector:
+    matchLabels:
+      app: previsao-tempo-amazonia-api
+  template:
+    metadata:
+      labels:
+        app: previsao-tempo-amazonia-api
+    spec:
+      containers:
+        - name: api-container
+          image: previsao_tempo_amazonia_image:v1
+          ports:
+            - containerPort: 8080
