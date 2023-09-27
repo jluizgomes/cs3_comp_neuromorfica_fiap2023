@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: previsao-tempo-amazonia-api
 spec:
-  replicas: 2 # Ajuste o número de réplicas conforme necessário
+  replicas: 2
   selector:
     matchLabels:
       app: previsao-tempo-amazonia-api

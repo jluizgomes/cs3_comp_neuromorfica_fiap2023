@@ -4,7 +4,7 @@ import pandas as pd
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://seu_usuario:senha@localhost/nome_do_banco'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://cs3neuro:cs3neuro2023@localhost/previsao_tempo_amazonia'
 
 db = SQLAlchemy(app)
 
