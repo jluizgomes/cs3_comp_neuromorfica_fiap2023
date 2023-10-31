@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
 import time
+import threading
+from functools import lru_cache
 
 app = Flask(__name__)
 
@@ -25,34 +27,45 @@ class PrevisaoTempo(db.Model):
 def create_configuration():
     return jsonify({"message": "Configuração criada com sucesso"})
 
+# Implementando memoization para leitura de CSV
+@lru_cache(maxsize=1)
+def read_csv_memo(filename):
+    return pd.read_csv(filename)
+
+def insert_data_to_db(df):
+    df.to_sql('previsao_tempo', con=db.engine, if_exists='replace', index=False)
+
 @app.route('/read', methods=['POST'])
 def read_csv():
-    start_time = time.time()  # Inicia a contagem do tempo
-    
+    start_time = time.time()
     csv_filename = "data/data_weather.csv"
-    
+
     try:
         # Ler o CSV
         read_start_time = time.time()
-        df = pd.read_csv(csv_filename)
+        df = read_csv_memo(csv_filename)
         read_end_time = time.time()
-        
-        # Inserir os dados no banco de dados
+
+        # Usando threading para inserção
+        thread = threading.Thread(target=insert_data_to_db, args=(df,))
         insert_start_time = time.time()
-        df.to_sql('previsao_tempo', con=db.engine, if_exists='replace', index=False)
+        thread.start()
+        thread.join()
         insert_end_time = time.time()
-        
+
         message = {
             "message": "Dados do CSV lidos e inseridos com sucesso",
             "read_time": read_end_time - read_start_time,
             "insert_time": insert_end_time - insert_start_time
         }
-        
+
         return jsonify(message)
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
     finally:
-        end_time = time.time()  # Encerra a contagem do tempo
+        end_time = time.time()
         print(f"Tempo total de execução: {end_time - start_time} segundos.")
 
 if __name__ == '__main__':
