@@ -1,4 +1,4 @@
-# Challenge Spring 3 - Computação Neuromórfica e Supercomputadores
+# Challenge Spring 3 / 4 - Computação Neuromórfica e Supercomputadores
 
 ## Instruções para Executar a API de Ingestão de Dados no MicroK8s
 
